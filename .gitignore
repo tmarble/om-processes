@@ -1,0 +1,27 @@
+# .gitignore
+
+# Java build artifacts
+/lib
+/pom.xml
+*jar
+*.class
+
+# Clojure build artifacts
+/classes
+/target
+/.lein-*
+
+# project specific artifacts
+
+# Heroku artifacts
+# e.g. heroku config:add JVM_OPTS=-Xms128m
+/.env
+
+# Editor artifacts
+.nrepl-port
+*~
+
+## Other
+# silly Mac filesystem
+*.DS_Store*
+*._*
