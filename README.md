@@ -8,7 +8,6 @@ to Om.
 
 Have [Leiningen](https://github.com/technomancy/leiningen) auto build ClojureScript sources:
 ```
-cd ../../..
 lein cljsbuild auto om-processes &
 ```
 
