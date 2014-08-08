@@ -12,6 +12,13 @@
 /.lein-*
 
 # project specific artifacts
+/resources/public/js/cljs/
+/resources/public/js/goog/
+/resources/public/js/om-processes.js
+/resources/public/js/om/
+/resources/public/js/om_processes/
+/resources/public/js/react-0.11.1.js
+/resources/public/js/react-0.11.1.min.js
 
 # Heroku artifacts
 # e.g. heroku config:add JVM_OPTS=-Xms128m

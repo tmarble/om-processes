@@ -22,5 +22,13 @@
                          :output-dir "resources/public/js/"
                          :output-to "resources/public/js/om-processes.js"
                          :optimizations :none
-                         :source-map true}}]}
+                         :source-map true}}
+             {:id "prod"
+              :source-paths ["src/cljs"]
+              :compiler {
+                         :output-dir "production/resources/public/js/"
+                         :output-to "production/resources/public/js/om-processes.js"
+                         :optimizations :advanced
+                         :pretty-print false}}
+             ]}
   )

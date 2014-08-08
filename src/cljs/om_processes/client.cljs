@@ -13,14 +13,33 @@
 ;; (quot value 10) is the group number for the color style
 ;; (mod value 10) is digit to display
 
-(def app-state (atom {:processes {:big-table nil}}))
+(def app-state (atom {:processes {:big-table nil
+                                  :render-rate 0}}))
 
 (def group (atom 0)) ;; color group (see inline style in index.html)
+
+;; the following is for optional performance instrumation (not
+;; part of the application state)
+(def stats (atom {:last-time nil :cells 0}))
+(def cells-per-sample 10000)
 
 (defn render! [processes width height queue]
   (doseq [[idx v] queue]
     (let [row (quot idx width)
           column (mod idx width)]
+      ;; optional performance counting below
+      (swap! stats
+        (fn [s]
+          (let [{:keys [last-time cells]} s]
+            (if (or (nil? last-time) (zero? (mod cells cells-per-sample)))
+              (let [now (.now js/Date)]
+                (if last-time
+                  (let [elapsed (- now last-time) ;; in ms
+                        render-rate (quot (* 1000 cells-per-sample) elapsed)]
+                    (om/update! processes [:render-rate] render-rate)))
+                {:last-time now :cells (inc cells)})
+              {:last-time last-time :cells (inc cells)}))))
+      ;; ---------------------------------------
       (om/transact! processes [:big-table row column]
         (fn [_] (+ (* 10 @group) v)))))
   (swap! group (fn [g] (mod (inc g) 5))))
@@ -42,7 +61,6 @@
                              (vec (repeat width 0))))
             table-size (* width height)
             render (chan render-size)]
-        (println "got to will-mount")
         (om/update! processes [:big-table] big-table)
         (loop [i 0]
           (when (< i table-size)
@@ -62,8 +80,9 @@
     om/IRenderState
     (render-state [_ state]
       (let [{:keys [width height]} state
-            big-table (:big-table (om/value processes))]
+            {:keys [big-table render-rate]} (om/value processes)]
         (dom/div #js {:id "processes-view"}
+          (dom/span nil (str "render-rate: " render-rate " cells/second"))
           (apply dom/table #js {:id "big-table"}
             (map
               (fn [row]
